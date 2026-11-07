@@ -1,6 +1,7 @@
 {
 	"name": "PL_Metadata_Driven_Excel_Load",
 	"properties": {
+		"description": "This is Metadata driven excel load pipeline which loads data form excel available on Azure Blob to On-Prem SQL server",
 		"activities": [
 			{
 				"name": "Lookup_Config",

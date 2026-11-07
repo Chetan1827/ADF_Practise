@@ -1,0 +1,6 @@
+{
+	"name": "SHIR-OnPrem-SQL",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

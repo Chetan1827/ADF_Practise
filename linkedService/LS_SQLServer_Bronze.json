@@ -1,0 +1,21 @@
+{
+	"name": "LS_SQLServer_Bronze",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "DESKTOP-7OHH0MA\\SQLEXPRESS",
+			"database": "SalesDataWarehouse",
+			"encrypt": "optional",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "adf_user",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkNjBlMzlkNi04YTM5LTQ3MjMtYjRjOC0xNzkxMGY3OGYyZjAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "SHIR-OnPrem-SQL",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

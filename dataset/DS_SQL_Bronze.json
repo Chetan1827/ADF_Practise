@@ -1,0 +1,134 @@
+{
+	"name": "DS_SQL_Bronze",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLServer_Bronze",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"pSchema": {
+				"type": "string",
+				"defaultValue": "bronze"
+			},
+			"pTable": {
+				"type": "string",
+				"defaultValue": "Raw_Sales_Data"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "Order ID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Order Date",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Year",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Quarter",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Month",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Region",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Area Manager",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Channel",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Customer Segment",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Sales Representative",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Division",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Product",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SKU",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Unit Price",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Discount %",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Gross Sales",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Discount Amount",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Net Sales",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cost",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Gross Profit",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tax",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Order Status",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().pSchema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().pTable",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

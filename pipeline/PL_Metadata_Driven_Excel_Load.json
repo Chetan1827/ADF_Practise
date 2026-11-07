@@ -1,0 +1,342 @@
+{
+	"name": "PL_Metadata_Driven_Excel_Load",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup_Config",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT\r\n    ConfigID,\r\n    SheetOrder,\r\n    SheetName,\r\n    ExcelRange,\r\n    TargetSchema,\r\n    TargetTable,\r\n    FirstRowAsHeader,\r\n    IsActive,\r\n    ExpectedRows\r\nFROM control.ExcelSheetConfig\r\nWHERE IsActive = 1\r\nORDER BY SheetOrder;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Config",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ForEach_Sheet",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Lookup_Config",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup_Config').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().TargetTable,'Monthly_Channel')",
+									"type": "Expression"
+								},
+								"ifFalseActivities": [
+									{
+										"name": "Copy_Excel_To_SQL",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "SqlServerSink",
+												"preCopyScript": {
+													"value": "@concat('TRUNCATE TABLE [',item().TargetSchema,'].[',item().TargetTable,']')",
+													"type": "Expression"
+												},
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_Excel_Source",
+												"type": "DatasetReference",
+												"parameters": {
+													"pFileName": "Advanced_Complex_Sales_Workbook.xlsx",
+													"pSheetName": {
+														"value": "@item().SheetName",
+														"type": "Expression"
+													},
+													"pRange": {
+														"value": "@item().ExcelRange",
+														"type": "Expression"
+													},
+													"pFirstRowAsHeader": {
+														"value": "@item().FirstRowAsHeader",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_SQL_Bronze",
+												"type": "DatasetReference",
+												"parameters": {
+													"pSchema": {
+														"value": "@item().TargetSchema",
+														"type": "Expression"
+													},
+													"pTable": {
+														"value": "@item().TargetTable",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								],
+								"ifTrueActivities": [
+									{
+										"name": "Copy_Monthly_Channel",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "ExcelSource",
+												"storeSettings": {
+													"type": "AzureBlobStorageReadSettings",
+													"recursive": true,
+													"enablePartitionDiscovery": false
+												}
+											},
+											"sink": {
+												"type": "SqlServerSink",
+												"preCopyScript": {
+													"value": "@concat('TRUNCATE TABLE [',item().TargetSchema,'].[',item().TargetTable,']')",
+													"type": "Expression"
+												},
+												"writeBehavior": "insert",
+												"sqlWriterUseTableLock": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 1
+														},
+														"sink": {
+															"name": "Month",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 2
+														},
+														"sink": {
+															"name": "Quarter",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 3
+														},
+														"sink": {
+															"name": "Retail_Orders",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 4
+														},
+														"sink": {
+															"name": "Retail_Net_Sales",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 5
+														},
+														"sink": {
+															"name": "Online_Orders",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 6
+														},
+														"sink": {
+															"name": "Online_Net_Sales",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 7
+														},
+														"sink": {
+															"name": "Distributor_Orders",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 8
+														},
+														"sink": {
+															"name": "Distributor_Net_Sales",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 9
+														},
+														"sink": {
+															"name": "Corporate_Orders",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 10
+														},
+														"sink": {
+															"name": "Corporate_Net_Sales",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "DS_Excel_Source",
+												"type": "DatasetReference",
+												"parameters": {
+													"pFileName": "Advanced_Complex_Sales_Workbook.xlsx",
+													"pSheetName": {
+														"value": "@item().SheetName",
+														"type": "Expression"
+													},
+													"pRange": {
+														"value": "@item().ExcelRange",
+														"type": "Expression"
+													},
+													"pFirstRowAsHeader": {
+														"value": "@item().FirstRowAsHeader",
+														"type": "Expression"
+													}
+												}
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "DS_SQL_Bronze",
+												"type": "DatasetReference",
+												"parameters": {
+													"pSchema": {
+														"value": "@item().TargetSchema",
+														"type": "Expression"
+													},
+													"pTable": {
+														"value": "@item().TargetTable",
+														"type": "Expression"
+													}
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2026-11-03T05:02:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

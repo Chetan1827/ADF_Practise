@@ -1,0 +1,57 @@
+{
+	"name": "DS_SQL_Config",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLServer_Bronze",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "ConfigID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SheetOrder",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SheetName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ExcelRange",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TargetSchema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "TargetTable",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FirstRowAsHeader",
+				"type": "bit"
+			},
+			{
+				"name": "IsActive",
+				"type": "bit"
+			},
+			{
+				"name": "ExpectedRows",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "control",
+			"table": "ExcelSheetConfig"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
